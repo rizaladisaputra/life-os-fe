@@ -1,17 +1,156 @@
-# lifeos_app
+# 📱 LifeOS
 
-A new Flutter project.
+LifeOS adalah aplikasi mobile personal productivity yang membantu pengguna membangun kehidupan yang seimbang antara ibadah, kesehatan, karier, keuangan, dan hubungan sosial.
 
-## Getting Started
+---
 
-This project is a starting point for a Flutter application.
+## ✨ Features
 
-A few resources to get you started if this is your first Flutter project:
+- 📅 Daily Planner
+- ✅ Habit Tracker
+- 🕌 Prayer Tracker
+- 🇬🇧 English Learning
+- 💼 Career Development
+- 💰 Finance Dashboard
+- 📖 Reading Tracker
+- 📈 Statistics
+- 🏆 Achievement & Gamification
+- 🔔 Smart Reminder
+- 🌙 Dark Mode
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+---
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## 📸 Preview
+
+Coming Soon...
+
+---
+
+# 🛠 Tech Stack
+
+## Mobile
+
+- Flutter
+- Dart
+- Riverpod
+- GoRouter
+- Dio
+- Freezed
+- Isar Database
+- Firebase Cloud Messaging
+
+## Backend
+
+- Spring Boot 3
+- Java 21
+- PostgreSQL
+- JPA / Hibernate
+- JWT Authentication
+- Flyway
+
+---
+
+# 📂 Project Structure
+
+```text
+lib/
+│
+├── core/
+│   ├── config/
+│   ├── constants/
+│   ├── router/
+│   ├── theme/
+│   └── utils/
+│
+├── features/
+│   ├── authentication/
+│   ├── dashboard/
+│   ├── planner/
+│   ├── habit/
+│   ├── finance/
+│   ├── english/
+│   ├── career/
+│   ├── profile/
+│   └── settings/
+│
+├── shared/
+│
+└── main.dart
+```
+
+---
+
+# 🚀 Getting Started
+
+Clone repository
+
+```bash
+git clone https://github.com/rizaladisaputra/life-os-fe.git
+```
+
+Masuk ke project
+
+```bash
+cd life-os-fe
+```
+
+Install dependency
+
+```bash
+flutter pub get
+```
+
+Run application
+
+```bash
+flutter run
+```
+
+---
+
+# 📱 Supported Platform
+
+- Android
+- iOS
+
+---
+
+# 🎯 Roadmap
+
+## Phase 1
+
+- Authentication
+- Dashboard
+- Planner
+- Habit Tracker
+
+## Phase 2
+
+- Prayer Tracker
+- English Learning
+- Reading Tracker
+- Finance
+
+## Phase 3
+
+- AI Assistant
+- Smart Reminder
+- Calendar Sync
+- Widget
+
+## Phase 4
+
+- Gamification
+- Statistics
+- Cloud Sync
+- Wear OS Support
+
+---
+
+# 📜 License
+
+MIT License
+
+---
+
+Made with ❤️ using Flutter.

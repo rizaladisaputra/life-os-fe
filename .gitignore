@@ -1,45 +1,111 @@
-# Miscellaneous
-*.class
-*.log
-*.pyc
-*.swp
+#========================
+# OS
+#========================
 .DS_Store
-.atom/
-.build/
-.buildlog/
-.history
-.svn/
-.swiftpm/
-migrate_working_dir/
+Thumbs.db
 
-# IntelliJ related
+#========================
+# IDE
+#========================
+.idea/
 *.iml
 *.ipr
 *.iws
-.idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
 
-# Flutter/Dart/Pub related
-**/doc/api/
-**/ios/Flutter/.last_build_id
+#========================
+# Flutter
+#========================
 .dart_tool/
+.flutter-plugins
 .flutter-plugins-dependencies
-.pub-cache/
+.packages
 .pub/
-/build/
-/coverage/
+.pub-cache/
+build/
+coverage/
 
-# Symbolication related
-app.*.symbols
+# Generated documentation
+doc/api/
 
-# Obfuscation related
-app.*.map.json
+#========================
+# Android
+#========================
+android/.gradle/
+android/local.properties
 
-# Android Studio will place build artifacts here
-/android/app/debug
-/android/app/profile
-/android/app/release
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# Signing
+android/key.properties
+*.jks
+*.keystore
+
+#========================
+# iOS
+#========================
+ios/Flutter/.last_build_id
+ios/Flutter/Generated.xcconfig
+ios/Flutter/flutter_export_environment.sh
+
+ios/Pods/
+ios/.symlinks/
+
+#========================
+# macOS
+#========================
+macos/Pods/
+
+#========================
+# Linux
+#========================
+linux/flutter/ephemeral/
+
+#========================
+# Windows
+#========================
+windows/flutter/ephemeral/
+
+#========================
+# Environment
+#========================
+.env
+.env.*
+!.env.example
+
+#========================
+# Firebase
+#========================
+google-services.json
+GoogleService-Info.plist
+firebase_options.dart
+
+#========================
+# Logs
+#========================
+*.log
+
+#========================
+# Cache
+#========================
+.cache/
+
+#========================
+# Misc
+#========================
+*.class
+*.pyc
+*.swp
+.history
+.atom/
+.build/
+.buildlog/
+.svn/
+.swiftpm/
+migrate_working_dir/
