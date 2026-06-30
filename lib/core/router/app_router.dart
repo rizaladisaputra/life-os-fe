@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/auth/auth_screen.dart';
 import '../../features/home/home_screen.dart';
 import '../../features/planner/planner_screen.dart';
 import '../../features/progress/progress_screen.dart';
@@ -8,13 +9,39 @@ import '../../features/finance/finance_screen.dart';
 import '../../features/profile/profile_screen.dart';
 import '../../features/english/english_screen.dart';
 import '../../features/career/career_screen.dart';
+import '../providers/auth_provider.dart';
 import '../theme/app_colors.dart';
 import '../theme/app_typography.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
+  final authState = ref.watch(authProvider);
+
   return GoRouter(
-    initialLocation: '/home',
+    initialLocation: '/auth',
+    redirect: (context, state) {
+      final isAuthRoute = state.matchedLocation == '/auth';
+
+      // Selama state masih initial/loading, jangan redirect dulu
+      if (authState.status == AuthStatus.initial ||
+          authState.status == AuthStatus.loading) {
+        return isAuthRoute ? null : '/auth';
+      }
+
+      final isAuthenticated = authState.isAuthenticated;
+
+      // Jika belum login dan bukan di /auth → paksa ke /auth
+      if (!isAuthenticated && !isAuthRoute) return '/auth';
+
+      // Jika sudah login dan masih di /auth → arahkan ke /home
+      if (isAuthenticated && isAuthRoute) return '/home';
+
+      return null;
+    },
     routes: [
+      GoRoute(
+        path: '/auth',
+        builder: (context, state) => const AuthScreen(),
+      ),
       ShellRoute(
         builder: (context, state, child) {
           return AppShell(child: child);

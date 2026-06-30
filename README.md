@@ -6,6 +6,7 @@ LifeOS adalah aplikasi mobile personal productivity yang membantu pengguna memba
 
 ## ✨ Features
 
+- 🔐 Authentication (Login & Signup with Email)
 - 📅 Daily Planner
 - ✅ Habit Tracker
 - 🕌 Prayer Tracker
@@ -34,10 +35,9 @@ Coming Soon...
 - Dart
 - Riverpod
 - GoRouter
-- Dio
-- Freezed
 - Isar Database
-- Firebase Cloud Messaging
+- SharedPreferences (Auth Persistence)
+- flutter_svg (SVG Support)
 
 ## Backend
 
@@ -56,24 +56,21 @@ Coming Soon...
 lib/
 │
 ├── core/
-│   ├── config/
-│   ├── constants/
+│   ├── models/
+│   ├── providers/
 │   ├── router/
 │   ├── theme/
-│   └── utils/
+│   └── widgets/
 │
 ├── features/
-│   ├── authentication/
-│   ├── dashboard/
-│   ├── planner/
-│   ├── habit/
-│   ├── finance/
-│   ├── english/
+│   ├── auth/
 │   ├── career/
+│   ├── english/
+│   ├── finance/
+│   ├── home/
+│   ├── planner/
 │   ├── profile/
-│   └── settings/
-│
-├── shared/
+│   └── progress/
 │
 └── main.dart
 ```
@@ -112,6 +109,7 @@ flutter run
 
 - Android
 - iOS
+- Web
 
 ---
 
@@ -119,31 +117,31 @@ flutter run
 
 ## Phase 1
 
-- Authentication
-- Dashboard
-- Planner
-- Habit Tracker
+- [x] Authentication (Email Login & Signup)
+- [ ] Dashboard / Home
+- [ ] Planner
+- [ ] Habit Tracker
 
 ## Phase 2
 
-- Prayer Tracker
-- English Learning
-- Reading Tracker
-- Finance
+- [ ] Prayer Tracker
+- [ ] English Learning
+- [ ] Reading Tracker
+- [ ] Finance
 
 ## Phase 3
 
-- AI Assistant
-- Smart Reminder
-- Calendar Sync
-- Widget
+- [ ] AI Assistant
+- [ ] Smart Reminder
+- [ ] Calendar Sync
+- [ ] Widget
 
 ## Phase 4
 
-- Gamification
-- Statistics
-- Cloud Sync
-- Wear OS Support
+- [ ] Gamification
+- [ ] Statistics
+- [ ] Cloud Sync
+- [ ] Wear OS Support
 
 ---
 

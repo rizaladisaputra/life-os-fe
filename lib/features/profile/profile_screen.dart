@@ -1,22 +1,24 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/providers/auth_provider.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/widgets/glass_card.dart';
-import '../../core/widgets/circular_progress.dart';
 
-class ProfileScreen extends StatelessWidget {
+class ProfileScreen extends ConsumerWidget {
   const ProfileScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final user = ref.watch(authProvider).user;
     return Scaffold(
       backgroundColor: AppColors.navyDeep,
       body: CustomScrollView(
         physics: const BouncingScrollPhysics(),
         slivers: [
-          SliverToBoxAdapter(child: _buildHeader(context)),
+          SliverToBoxAdapter(child: _buildHeader(context, user?.displayName ?? 'User', user?.email ?? '')),
           SliverPadding(
             padding: const EdgeInsets.symmetric(horizontal: 20),
             sliver: SliverToBoxAdapter(child: _buildXpCard()),
@@ -35,14 +37,14 @@ class ProfileScreen extends StatelessWidget {
           ),
           SliverPadding(
             padding: const EdgeInsets.fromLTRB(20, 16, 20, 100),
-            sliver: SliverToBoxAdapter(child: _buildSettings()),
+            sliver: SliverToBoxAdapter(child: _buildSettings(context, ref)),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, String displayName, String email) {
     return Container(
       padding: EdgeInsets.only(
         top: MediaQuery.of(context).padding.top + 16,
@@ -120,7 +122,15 @@ class ProfileScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Rizal', style: AppTypography.headlineMedium),
+                    Text(displayName, style: AppTypography.headlineMedium),
+                    const SizedBox(height: 4),
+                    if (email.isNotEmpty)
+                      Text(
+                        email,
+                        style: AppTypography.bodySmall.copyWith(
+                            color: AppColors.textMuted),
+                        overflow: TextOverflow.ellipsis,
+                      ),
                     const SizedBox(height: 4),
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -346,13 +356,13 @@ class ProfileScreen extends StatelessWidget {
     ).animate().fadeIn(delay: 300.ms, duration: 400.ms);
   }
 
-  Widget _buildSettings() {
+  Widget _buildSettings(BuildContext context, WidgetRef ref) {
     final items = [
-      (Icons.person_outline_rounded, 'Edit Profile', AppColors.emerald),
-      (Icons.notifications_outlined, 'Notifikasi', AppColors.orange),
-      (Icons.dark_mode_outlined, 'Tampilan', AppColors.prayerSubuh),
-      (Icons.backup_outlined, 'Backup Data', AppColors.info),
-      (Icons.logout_rounded, 'Keluar', AppColors.error),
+      (Icons.person_outline_rounded, 'Edit Profile', AppColors.emerald, false),
+      (Icons.notifications_outlined, 'Notifikasi', AppColors.orange, false),
+      (Icons.dark_mode_outlined, 'Tampilan', AppColors.prayerSubuh, false),
+      (Icons.backup_outlined, 'Backup Data', AppColors.info, false),
+      (Icons.logout_rounded, 'Keluar', AppColors.error, true),
     ];
 
     return GlassCard(
@@ -360,7 +370,43 @@ class ProfileScreen extends StatelessWidget {
       child: Column(
         children: items.map((item) {
           return GestureDetector(
-            onTap: () {},
+            onTap: () async {
+              if (item.$4) {
+                // Logout
+                final confirm = await showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    backgroundColor: AppColors.navyMid,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20)),
+                    title: Text('Keluar?', style: AppTypography.headlineSmall),
+                    content: Text(
+                      'Kamu akan keluar dari akunmu.',
+                      style: AppTypography.bodyMedium
+                          .copyWith(color: AppColors.textMuted),
+                    ),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, false),
+                        child: Text('Batal',
+                            style: AppTypography.titleMedium
+                                .copyWith(color: AppColors.textMuted)),
+                      ),
+                      TextButton(
+                        onPressed: () => Navigator.pop(ctx, true),
+                        child: Text('Keluar',
+                            style: AppTypography.titleMedium
+                                .copyWith(color: AppColors.error)),
+                      ),
+                    ],
+                  ),
+                );
+                if (confirm == true && context.mounted) {
+                  await ref.read(authProvider.notifier).logout();
+                  // Router redirect akan otomatis ke /auth
+                }
+              }
+            },
             child: Container(
               padding: const EdgeInsets.symmetric(vertical: 14),
               decoration: const BoxDecoration(

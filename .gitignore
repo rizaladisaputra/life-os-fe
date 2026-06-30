@@ -109,3 +109,7 @@ firebase_options.dart
 .svn/
 .swiftpm/
 migrate_working_dir/
+
+# Isar Database local files
+*.isar
+*.isar.lock

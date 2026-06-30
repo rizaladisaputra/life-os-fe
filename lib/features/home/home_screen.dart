@@ -6,6 +6,7 @@ import 'package:intl/intl.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_typography.dart';
 import '../../core/providers/app_providers.dart';
+import '../../core/providers/auth_provider.dart';
 import '../../core/widgets/glass_card.dart';
 import '../../core/widgets/circular_progress.dart';
 import 'widgets/prayer_time_widget.dart';
@@ -111,6 +112,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   Widget _buildHeader(DateTime now, double progress) {
     final greeting = _getGreeting(now.hour);
     final dateStr = DateFormat('EEEE, d MMMM', 'id_ID').format(now);
+    final user = ref.watch(authProvider).user;
+    final userName = user?.displayName ?? 'User';
 
     return Container(
       padding: EdgeInsets.only(
@@ -138,7 +141,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      '$greeting, Rizal 👋',
+                      '$greeting, $userName 👋',
                       style: AppTypography.greeting,
                     ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.05, end: 0),
                     const SizedBox(height: 4),
