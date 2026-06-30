@@ -64,7 +64,8 @@ class HabitTrackerGrid extends ConsumerWidget {
                       Text(habit.emoji, style: const TextStyle(fontSize: 16)),
                       const SizedBox(width: 6),
                       Expanded(
-                        child: Text(habit.name, style: AppTypography.titleMedium),
+                        child:
+                            Text(habit.name, style: AppTypography.titleMedium),
                       ),
                       if (habit.currentStreak > 0)
                         Container(
@@ -97,7 +98,7 @@ class HabitTrackerGrid extends ConsumerWidget {
                 ],
               ),
             );
-          }).toList(),
+          }),
         ],
       ),
     );
@@ -112,7 +113,8 @@ class _MiniContributionGrid extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final today = DateTime.now();
-    final days = List.generate(21, (i) => today.subtract(Duration(days: 20 - i)));
+    final days =
+        List.generate(21, (i) => today.subtract(Duration(days: 20 - i)));
 
     return Row(
       children: days.map((day) {
@@ -127,9 +129,7 @@ class _MiniContributionGrid extends StatelessWidget {
             height: 12,
             margin: const EdgeInsets.symmetric(horizontal: 1),
             decoration: BoxDecoration(
-              color: completed
-                  ? AppColors.emerald
-                  : AppColors.habitEmpty,
+              color: completed ? AppColors.emerald : AppColors.habitEmpty,
               borderRadius: BorderRadius.circular(3),
               border: isToday
                   ? Border.all(color: AppColors.orange, width: 1)

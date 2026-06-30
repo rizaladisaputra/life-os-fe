@@ -58,11 +58,13 @@ class EnglishScreen extends StatelessWidget {
               children: [
                 Text(
                   '18 Hari Beruntun!',
-                  style: AppTypography.headlineMedium.copyWith(color: Colors.white),
+                  style: AppTypography.headlineMedium
+                      .copyWith(color: Colors.white),
                 ),
                 Text(
                   'Pertahankan streak belajarmu',
-                  style: AppTypography.bodySmall.copyWith(color: Colors.white70),
+                  style:
+                      AppTypography.bodySmall.copyWith(color: Colors.white70),
                 ),
               ],
             ),
@@ -74,9 +76,17 @@ class EnglishScreen extends StatelessWidget {
 
   Widget _buildVocabularyToday() {
     final words = [
-      ('Resilience', 'Ketahanan / keuletan', 'Her resilience in facing challenges is inspiring.'),
+      (
+        'Resilience',
+        'Ketahanan / keuletan',
+        'Her resilience in facing challenges is inspiring.'
+      ),
       ('Ubiquitous', 'Ada di mana-mana', 'Smartphones have become ubiquitous.'),
-      ('Ephemeral', 'Berumur pendek', 'Fame in the internet age can be ephemeral.'),
+      (
+        'Ephemeral',
+        'Berumur pendek',
+        'Fame in the internet age can be ephemeral.'
+      ),
     ];
 
     return Column(
@@ -92,9 +102,12 @@ class EnglishScreen extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      Text(w.$1, style: AppTypography.titleLarge.copyWith(color: AppColors.emerald)),
+                      Text(w.$1,
+                          style: AppTypography.titleLarge
+                              .copyWith(color: AppColors.emerald)),
                       const Spacer(),
-                      const Icon(Icons.volume_up_rounded, color: AppColors.textMuted, size: 20),
+                      const Icon(Icons.volume_up_rounded,
+                          color: AppColors.textMuted, size: 20),
                     ],
                   ),
                   const SizedBox(height: 4),
@@ -115,7 +128,8 @@ class EnglishScreen extends StatelessWidget {
                         Expanded(
                           child: Text(
                             w.$3,
-                            style: AppTypography.bodySmall.copyWith(fontStyle: FontStyle.italic),
+                            style: AppTypography.bodySmall
+                                .copyWith(fontStyle: FontStyle.italic),
                           ),
                         ),
                       ],
@@ -125,7 +139,7 @@ class EnglishScreen extends StatelessWidget {
               ),
             ),
           ).animate().fadeIn(delay: 200.ms, duration: 400.ms);
-        }).toList(),
+        }),
       ],
     );
   }

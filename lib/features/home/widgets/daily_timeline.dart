@@ -38,7 +38,7 @@ class DailyTimeline extends ConsumerWidget {
                 delay: Duration(milliseconds: 50 * index),
                 duration: 300.ms,
               );
-        }).toList(),
+        }),
       ],
     );
   }
@@ -114,7 +114,8 @@ class _TimelineItemState extends State<_TimelineItem> {
                       decoration: BoxDecoration(
                         color: AppColors.orange.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.orange.withValues(alpha: 0.4)),
+                        border: Border.all(
+                            color: AppColors.orange.withValues(alpha: 0.4)),
                       ),
                       child: const Icon(Icons.edit_outlined,
                           color: AppColors.orange, size: 18),
@@ -129,7 +130,8 @@ class _TimelineItemState extends State<_TimelineItem> {
                       decoration: BoxDecoration(
                         color: AppColors.error.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: AppColors.error.withValues(alpha: 0.4)),
+                        border: Border.all(
+                            color: AppColors.error.withValues(alpha: 0.4)),
                       ),
                       child: const Icon(Icons.delete_outline_rounded,
                           color: AppColors.error, size: 18),
@@ -173,7 +175,8 @@ class _TimelineItemState extends State<_TimelineItem> {
                         boxShadow: widget.activity.isCompleted
                             ? [
                                 BoxShadow(
-                                  color: AppColors.emerald.withValues(alpha: 0.4),
+                                  color:
+                                      AppColors.emerald.withValues(alpha: 0.4),
                                   blurRadius: 6,
                                   spreadRadius: 1,
                                 )
@@ -256,7 +259,8 @@ class _TimelineItemState extends State<_TimelineItem> {
                                 border: Border.all(
                                   color: widget.activity.isCompleted
                                       ? AppColors.emerald
-                                      : AppColors.textMuted.withValues(alpha: 0.5),
+                                      : AppColors.textMuted
+                                          .withValues(alpha: 0.5),
                                   width: 1.5,
                                 ),
                               ),

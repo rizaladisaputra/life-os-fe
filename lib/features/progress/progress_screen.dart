@@ -77,16 +77,28 @@ class _ProgressScreenState extends ConsumerState<ProgressScreen>
             ),
             child: Row(
               children: [
-                Expanded(
-                  child: _ScoreStat(label: 'Monthly Score', value: '87', unit: 'pts', color: AppColors.emerald),
+                const Expanded(
+                  child: _ScoreStat(
+                      label: 'Monthly Score',
+                      value: '87',
+                      unit: 'pts',
+                      color: AppColors.emerald),
                 ),
                 Container(width: 1, height: 50, color: AppColors.cardBorder),
-                Expanded(
-                  child: _ScoreStat(label: 'Longest Streak', value: '22', unit: 'hari', color: AppColors.orange),
+                const Expanded(
+                  child: _ScoreStat(
+                      label: 'Longest Streak',
+                      value: '22',
+                      unit: 'hari',
+                      color: AppColors.orange),
                 ),
                 Container(width: 1, height: 50, color: AppColors.cardBorder),
-                Expanded(
-                  child: _ScoreStat(label: 'Level', value: 'Lv.8', unit: 'Builder', color: AppColors.prayerSubuh),
+                const Expanded(
+                  child: _ScoreStat(
+                      label: 'Level',
+                      value: 'Lv.8',
+                      unit: 'Builder',
+                      color: AppColors.prayerSubuh),
                 ),
               ],
             ),
@@ -120,9 +132,12 @@ class _ScoreStat extends StatelessWidget {
             value,
             style: AppTypography.headlineMedium.copyWith(color: color),
           ),
-          Text(unit, style: AppTypography.labelSmall.copyWith(color: color.withValues(alpha: 0.7))),
+          Text(unit,
+              style: AppTypography.labelSmall
+                  .copyWith(color: color.withValues(alpha: 0.7))),
           const SizedBox(height: 2),
-          Text(label, style: AppTypography.labelSmall, textAlign: TextAlign.center),
+          Text(label,
+              style: AppTypography.labelSmall, textAlign: TextAlign.center),
         ],
       ),
     );
@@ -135,7 +150,8 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   _TabBarDelegate({required this.tabController});
 
   @override
-  Widget build(BuildContext context, double shrinkOffset, bool overlapsContent) {
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
     return Container(
       color: AppColors.navyDeep,
       child: TabBar(
@@ -144,7 +160,8 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
         indicatorWeight: 2,
         labelColor: AppColors.emerald,
         unselectedLabelColor: AppColors.textMuted,
-        labelStyle: AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w600),
+        labelStyle:
+            AppTypography.titleSmall.copyWith(fontWeight: FontWeight.w600),
         tabs: const [
           Tab(text: 'Statistik'),
           Tab(text: 'Achievement'),
@@ -159,7 +176,8 @@ class _TabBarDelegate extends SliverPersistentHeaderDelegate {
   @override
   double get minExtent => 46;
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) => false;
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }
 
 // ─── Stats Tab ─────────────────────────────────────────────────────────────────
@@ -178,11 +196,27 @@ class _StatsTab extends ConsumerWidget {
           childAspectRatio: 1.5,
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          children: [
-            _StatCard(emoji: '📚', label: 'Jam Belajar', value: '48h', color: AppColors.prayerSubuh),
-            _StatCard(emoji: '🇬🇧', label: 'Jam Bahasa Inggris', value: '12h', color: AppColors.emerald),
-            _StatCard(emoji: '💪', label: 'Sesi Workout', value: '18x', color: AppColors.orange),
-            _StatCard(emoji: '📖', label: 'Jam Membaca', value: '9h', color: AppColors.prayerIsya),
+          children: const [
+            _StatCard(
+                emoji: '📚',
+                label: 'Jam Belajar',
+                value: '48h',
+                color: AppColors.prayerSubuh),
+            _StatCard(
+                emoji: '🇬🇧',
+                label: 'Jam Bahasa Inggris',
+                value: '12h',
+                color: AppColors.emerald),
+            _StatCard(
+                emoji: '💪',
+                label: 'Sesi Workout',
+                value: '18x',
+                color: AppColors.orange),
+            _StatCard(
+                emoji: '📖',
+                label: 'Jam Membaca',
+                value: '9h',
+                color: AppColors.prayerIsya),
           ],
         ).animate().fadeIn(delay: 100.ms, duration: 400.ms),
         const SizedBox(height: 20),
@@ -205,7 +239,15 @@ class _StatsTab extends ConsumerWidget {
                         sideTitles: SideTitles(
                           showTitles: true,
                           getTitlesWidget: (value, meta) {
-                            const days = ['Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab', 'Min'];
+                            const days = [
+                              'Sen',
+                              'Sel',
+                              'Rab',
+                              'Kam',
+                              'Jum',
+                              'Sab',
+                              'Min'
+                            ];
                             return Text(
                               days[value.toInt() % 7],
                               style: AppTypography.labelSmall,
@@ -213,13 +255,16 @@ class _StatsTab extends ConsumerWidget {
                           },
                         ),
                       ),
-                      leftTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                      rightTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                      leftTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      topTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
+                      rightTitles: const AxisTitles(
+                          sideTitles: SideTitles(showTitles: false)),
                     ),
                     gridData: FlGridData(
                       show: true,
-                      getDrawingHorizontalLine: (value) => FlLine(
+                      getDrawingHorizontalLine: (value) => const FlLine(
                         color: AppColors.cardBorder,
                         strokeWidth: 1,
                       ),
@@ -242,15 +287,17 @@ class _StatsTab extends ConsumerWidget {
         ).animate().fadeIn(delay: 200.ms, duration: 400.ms),
         const SizedBox(height: 20),
         // Prayer stats
-        GlassCard(
+        const GlassCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SectionHeader(title: 'Prayer Completion'),
+              SectionHeader(title: 'Prayer Completion'),
               _PrayerStatRow('Subuh Tepat Waktu', 0.85, AppColors.prayerSubuh),
-              _PrayerStatRow('Dzuhur Tepat Waktu', 0.92, AppColors.prayerDzuhur),
+              _PrayerStatRow(
+                  'Dzuhur Tepat Waktu', 0.92, AppColors.prayerDzuhur),
               _PrayerStatRow('Ashar Tepat Waktu', 0.78, AppColors.prayerAshar),
-              _PrayerStatRow('Maghrib Tepat Waktu', 0.95, AppColors.prayerMaghrib),
+              _PrayerStatRow(
+                  'Maghrib Tepat Waktu', 0.95, AppColors.prayerMaghrib),
               _PrayerStatRow('Isya Tepat Waktu', 0.88, AppColors.prayerIsya),
             ],
           ),
@@ -325,7 +372,10 @@ class _StatCard extends StatelessWidget {
                 value,
                 style: AppTypography.headlineMedium.copyWith(color: color),
               ),
-              Text(label, style: AppTypography.labelSmall, maxLines: 1, overflow: TextOverflow.ellipsis),
+              Text(label,
+                  style: AppTypography.labelSmall,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis),
             ],
           ),
         ],
@@ -364,7 +414,8 @@ class _PrayerStatRow extends StatelessWidget {
           const SizedBox(width: 8),
           Text(
             '${(value * 100).toInt()}%',
-            style: AppTypography.labelSmall.copyWith(color: color, fontWeight: FontWeight.w600),
+            style: AppTypography.labelSmall
+                .copyWith(color: color, fontWeight: FontWeight.w600),
           ),
         ],
       ),
@@ -376,14 +427,30 @@ class _PrayerStatRow extends StatelessWidget {
 
 class _AchievementsTab extends StatelessWidget {
   final _achievements = const [
-    _Achievement('🏅', '30 Hari Konsisten', 'Menjaga streak selama 30 hari penuh', true, AppColors.orange),
-    _Achievement('🏆', '100 Jam Belajar', 'Total 100 jam waktu belajar', true, AppColors.prayerDzuhur),
-    _Achievement('💪', 'Workout 50x', 'Menyelesaikan 50 sesi workout', false, AppColors.emerald),
-    _Achievement('🕌', 'Subuh 100 Hari', 'Sholat Subuh tepat waktu 100 hari', false, AppColors.prayerSubuh),
-    _Achievement('🇬🇧', 'English 365 Days', 'Belajar Bahasa Inggris setiap hari selama setahun', false, AppColors.info),
-    _Achievement('🌟', 'Perfect Week', 'Menyelesaikan semua habit dalam 1 minggu penuh', true, AppColors.prayerIsya),
-    _Achievement('📚', 'Book Worm', 'Membaca 12 buku dalam setahun', false, AppColors.prayerAshar),
-    _Achievement('💰', 'Investor', 'Konsisten investasi selama 6 bulan', false, AppColors.emeraldDark),
+    _Achievement('🏅', '30 Hari Konsisten',
+        'Menjaga streak selama 30 hari penuh', true, AppColors.orange),
+    _Achievement('🏆', '100 Jam Belajar', 'Total 100 jam waktu belajar', true,
+        AppColors.prayerDzuhur),
+    _Achievement('💪', 'Workout 50x', 'Menyelesaikan 50 sesi workout', false,
+        AppColors.emerald),
+    _Achievement('🕌', 'Subuh 100 Hari', 'Sholat Subuh tepat waktu 100 hari',
+        false, AppColors.prayerSubuh),
+    _Achievement(
+        '🇬🇧',
+        'English 365 Days',
+        'Belajar Bahasa Inggris setiap hari selama setahun',
+        false,
+        AppColors.info),
+    _Achievement(
+        '🌟',
+        'Perfect Week',
+        'Menyelesaikan semua habit dalam 1 minggu penuh',
+        true,
+        AppColors.prayerIsya),
+    _Achievement('📚', 'Book Worm', 'Membaca 12 buku dalam setahun', false,
+        AppColors.prayerAshar),
+    _Achievement('💰', 'Investor', 'Konsisten investasi selama 6 bulan', false,
+        AppColors.emeraldDark),
   ];
 
   @override
@@ -402,7 +469,8 @@ class _AchievementsTab extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text('$earned / ${_achievements.length} Achieved',
-                      style: AppTypography.headlineSmall.copyWith(color: AppColors.orange)),
+                      style: AppTypography.headlineSmall
+                          .copyWith(color: AppColors.orange)),
                   Text('Keep going!', style: AppTypography.bodySmall),
                 ],
               ),
@@ -420,7 +488,8 @@ class _AchievementsTab extends StatelessWidget {
           children: _achievements.asMap().entries.map((e) {
             return _AchievementCard(achievement: e.value)
                 .animate()
-                .fadeIn(delay: Duration(milliseconds: 50 * e.key), duration: 300.ms)
+                .fadeIn(
+                    delay: Duration(milliseconds: 50 * e.key), duration: 300.ms)
                 .scale(begin: const Offset(0.9, 0.9), end: const Offset(1, 1));
           }).toList(),
         ),
@@ -436,7 +505,8 @@ class _Achievement {
   final bool earned;
   final Color color;
 
-  const _Achievement(this.emoji, this.title, this.description, this.earned, this.color);
+  const _Achievement(
+      this.emoji, this.title, this.description, this.earned, this.color);
 }
 
 class _AchievementCard extends StatelessWidget {
@@ -448,8 +518,12 @@ class _AchievementCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return GlassCard(
       padding: const EdgeInsets.all(14),
-      backgroundColor: achievement.earned ? achievement.color.withValues(alpha: 0.1) : AppColors.cardSurface,
-      borderColor: achievement.earned ? achievement.color.withValues(alpha: 0.4) : AppColors.cardBorder,
+      backgroundColor: achievement.earned
+          ? achievement.color.withValues(alpha: 0.1)
+          : AppColors.cardSurface,
+      borderColor: achievement.earned
+          ? achievement.color.withValues(alpha: 0.4)
+          : AppColors.cardBorder,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -458,14 +532,17 @@ class _AchievementCard extends StatelessWidget {
             style: TextStyle(
               fontSize: 32,
               color: achievement.earned ? null : null,
-            ).copyWith(color: achievement.earned ? null : const Color(0x66FFFFFF)),
+            ).copyWith(
+                color: achievement.earned ? null : const Color(0x66FFFFFF)),
           ),
           const SizedBox(height: 8),
           Text(
             achievement.title,
             style: AppTypography.titleSmall.copyWith(
-              color: achievement.earned ? achievement.color : AppColors.textMuted,
-              fontWeight: achievement.earned ? FontWeight.w700 : FontWeight.w400,
+              color:
+                  achievement.earned ? achievement.color : AppColors.textMuted,
+              fontWeight:
+                  achievement.earned ? FontWeight.w700 : FontWeight.w400,
             ),
             textAlign: TextAlign.center,
             maxLines: 2,
@@ -538,7 +615,9 @@ class _ReflectionTabState extends State<_ReflectionTab> {
                           Text(
                             _moodLabels[e.key],
                             style: AppTypography.labelSmall.copyWith(
-                              color: isSelected ? AppColors.emerald : AppColors.textMuted,
+                              color: isSelected
+                                  ? AppColors.emerald
+                                  : AppColors.textMuted,
                             ),
                           ),
                         ],

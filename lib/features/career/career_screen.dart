@@ -60,9 +60,12 @@ class CareerScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text('Target Role', style: AppTypography.labelMedium.copyWith(color: Colors.white70)),
+                    Text('Target Role',
+                        style: AppTypography.labelMedium
+                            .copyWith(color: Colors.white70)),
                     Text('Senior Backend Engineer',
-                        style: AppTypography.headlineMedium.copyWith(color: Colors.white)),
+                        style: AppTypography.headlineMedium
+                            .copyWith(color: Colors.white)),
                   ],
                 ),
               ),
@@ -156,22 +159,28 @@ class CareerScreen extends StatelessWidget {
                           Row(
                             children: [
                               if (skill.$3)
-                                const Icon(Icons.check_circle_rounded, color: AppColors.emerald, size: 16)
+                                const Icon(Icons.check_circle_rounded,
+                                    color: AppColors.emerald, size: 16)
                               else
-                                const Icon(Icons.circle_outlined, color: AppColors.textMuted, size: 16),
+                                const Icon(Icons.circle_outlined,
+                                    color: AppColors.textMuted, size: 16),
                               const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   skill.$1,
                                   style: AppTypography.bodySmall.copyWith(
-                                    color: skill.$3 ? AppColors.emerald : AppColors.textPrimary,
+                                    color: skill.$3
+                                        ? AppColors.emerald
+                                        : AppColors.textPrimary,
                                   ),
                                 ),
                               ),
                               Text(
                                 '${(skill.$2 * 100).toInt()}%',
                                 style: AppTypography.labelSmall.copyWith(
-                                  color: skill.$3 ? AppColors.emerald : AppColors.textMuted,
+                                  color: skill.$3
+                                      ? AppColors.emerald
+                                      : AppColors.textMuted,
                                 ),
                               ),
                             ],
@@ -186,8 +195,9 @@ class CareerScreen extends StatelessWidget {
                                 return LinearProgressIndicator(
                                   value: val,
                                   backgroundColor: AppColors.navyLight,
-                                  valueColor: AlwaysStoppedAnimation(
-                                      skill.$3 ? AppColors.emerald : AppColors.prayerDzuhur),
+                                  valueColor: AlwaysStoppedAnimation(skill.$3
+                                      ? AppColors.emerald
+                                      : AppColors.prayerDzuhur),
                                   minHeight: 4,
                                 );
                               },
@@ -196,12 +206,14 @@ class CareerScreen extends StatelessWidget {
                         ],
                       ),
                     );
-                  }).toList(),
+                  }),
                 ],
               ),
-            ).animate().fadeIn(delay: Duration(milliseconds: 200 + (entry.key * 100)), duration: 400.ms),
+            ).animate().fadeIn(
+                delay: Duration(milliseconds: 200 + (entry.key * 100)),
+                duration: 400.ms),
           );
-        }).toList(),
+        }),
         const SizedBox(height: 80),
       ],
     );

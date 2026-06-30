@@ -89,7 +89,8 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                     formatButtonDecoration: BoxDecoration(
                       color: AppColors.emeraldGlow,
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.emerald.withValues(alpha: 0.4)),
+                      border: Border.all(
+                          color: AppColors.emerald.withValues(alpha: 0.4)),
                     ),
                     formatButtonTextStyle: AppTypography.labelMedium.copyWith(
                       color: AppColors.emerald,
@@ -181,14 +182,17 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
               decoration: BoxDecoration(
                 color: AppColors.emeraldGlow,
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: AppColors.emerald.withValues(alpha: 0.4)),
+                border:
+                    Border.all(color: AppColors.emerald.withValues(alpha: 0.4)),
               ),
               child: Row(
                 children: [
-                  const Icon(Icons.today_rounded, color: AppColors.emerald, size: 16),
+                  const Icon(Icons.today_rounded,
+                      color: AppColors.emerald, size: 16),
                   const SizedBox(width: 4),
                   Text('Hari Ini',
-                      style: AppTypography.labelMedium.copyWith(color: AppColors.emerald)),
+                      style: AppTypography.labelMedium
+                          .copyWith(color: AppColors.emerald)),
                 ],
               ),
             ),
@@ -207,7 +211,7 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
         GlassCard(
           child: Column(
             children: [
-              ...activities.map((a) => _PlannerActivityItem(activity: a)).toList(),
+              ...activities.map((a) => _PlannerActivityItem(activity: a)),
               const SizedBox(height: 8),
               GestureDetector(
                 onTap: () {},
@@ -217,15 +221,18 @@ class _PlannerScreenState extends ConsumerState<PlannerScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.navyLight,
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.cardBorder, style: BorderStyle.solid),
+                    border: Border.all(
+                        color: AppColors.cardBorder, style: BorderStyle.solid),
                   ),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.add_rounded, color: AppColors.emerald, size: 18),
+                      const Icon(Icons.add_rounded,
+                          color: AppColors.emerald, size: 18),
                       const SizedBox(width: 6),
                       Text('Tambah Aktivitas',
-                          style: AppTypography.labelLarge.copyWith(color: AppColors.emerald)),
+                          style: AppTypography.labelLarge
+                              .copyWith(color: AppColors.emerald)),
                     ],
                   ),
                 ),
@@ -248,7 +255,8 @@ class _PlannerActivityItem extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 10),
       decoration: const BoxDecoration(
-        border: Border(bottom: BorderSide(color: AppColors.cardBorder, width: 1)),
+        border:
+            Border(bottom: BorderSide(color: AppColors.cardBorder, width: 1)),
       ),
       child: Row(
         children: [
@@ -273,8 +281,11 @@ class _PlannerActivityItem extends StatelessWidget {
             ),
           ),
           Icon(
-            activity.isCompleted ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
-            color: activity.isCompleted ? AppColors.emerald : AppColors.textMuted,
+            activity.isCompleted
+                ? Icons.check_circle_rounded
+                : Icons.radio_button_unchecked_rounded,
+            color:
+                activity.isCompleted ? AppColors.emerald : AppColors.textMuted,
             size: 20,
           ),
         ],

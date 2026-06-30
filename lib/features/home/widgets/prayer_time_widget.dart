@@ -29,7 +29,7 @@ class PrayerTimeWidget extends ConsumerWidget {
         children: [
           Row(
             children: [
-              Text('🕌', style: const TextStyle(fontSize: 18)),
+              const Text('🕌', style: TextStyle(fontSize: 18)),
               const SizedBox(width: 8),
               Text('Waktu Sholat', style: AppTypography.titleLarge),
               const Spacer(),
@@ -60,7 +60,8 @@ class PrayerTimeWidget extends ConsumerWidget {
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 200),
                     margin: const EdgeInsets.symmetric(horizontal: 3),
-                    padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
                     decoration: BoxDecoration(
                       color: prayer.isCompleted
                           ? color.withValues(alpha: 0.15)
@@ -83,7 +84,9 @@ class PrayerTimeWidget extends ConsumerWidget {
                         Text(
                           prayer.name,
                           style: AppTypography.labelSmall.copyWith(
-                            color: prayer.isCompleted ? color : AppColors.textMuted,
+                            color: prayer.isCompleted
+                                ? color
+                                : AppColors.textMuted,
                             fontWeight: prayer.isCompleted
                                 ? FontWeight.w600
                                 : FontWeight.w400,
@@ -104,7 +107,8 @@ class PrayerTimeWidget extends ConsumerWidget {
                           width: 20,
                           height: 20,
                           decoration: BoxDecoration(
-                            color: prayer.isCompleted ? color : Colors.transparent,
+                            color:
+                                prayer.isCompleted ? color : Colors.transparent,
                             borderRadius: BorderRadius.circular(20),
                             border: Border.all(
                               color: prayer.isCompleted

@@ -20,7 +20,7 @@ class WeeklyGoalsCard extends ConsumerWidget {
             title: 'Weekly Goals',
             subtitle: 'Progress minggu ini',
           ),
-          ...goals.map((goal) => _GoalItem(goal: goal)).toList(),
+          ...goals.map((goal) => _GoalItem(goal: goal)),
         ],
       ),
     );
