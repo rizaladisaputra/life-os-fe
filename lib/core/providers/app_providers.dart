@@ -1,95 +1,83 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:dio/dio.dart';
 import '../models/activity_model.dart';
 import '../models/habit_model.dart';
 import '../models/prayer_model.dart';
+import '../network/api_service.dart';
 
 // ─── Activity Provider ─────────────────────────────────────────────────────────
 
 final activitiesProvider =
     StateNotifierProvider<ActivitiesNotifier, List<ActivityModel>>((ref) {
-  return ActivitiesNotifier();
+  final notifier = ActivitiesNotifier();
+  // Load data untuk hari ini secara otomatis saat diinisialisasi
+  notifier.loadActivities(DateTime.now());
+  return notifier;
 });
 
 class ActivitiesNotifier extends StateNotifier<List<ActivityModel>> {
-  ActivitiesNotifier() : super(_defaultActivities());
+  ActivitiesNotifier() : super([]);
 
-  static List<ActivityModel> _defaultActivities() {
-    return [
-      const ActivityModel(
-          id: '1',
-          time: '04:00',
-          emoji: '🌙',
-          title: 'Bangun',
-          category: ActivityCategory.daily,
-          isCompleted: true),
-      const ActivityModel(
-          id: '2',
-          time: '04:10',
-          emoji: '🕌',
-          title: 'Sholat Subuh',
-          category: ActivityCategory.prayer,
-          isCompleted: true),
-      const ActivityModel(
-          id: '3',
-          time: '04:35',
-          emoji: '🇬🇧',
-          title: 'Bahasa Inggris',
-          category: ActivityCategory.english,
-          isCompleted: false),
-      const ActivityModel(
-          id: '4',
-          time: '05:20',
-          emoji: '📖',
-          title: 'Membaca Buku',
-          category: ActivityCategory.learning,
-          isCompleted: false),
-      const ActivityModel(
-          id: '5',
-          time: '05:50',
-          emoji: '🏃',
-          title: 'Stretching',
-          category: ActivityCategory.health,
-          isCompleted: false),
-      const ActivityModel(
-          id: '6',
-          time: '06:20',
-          emoji: '🚿',
-          title: 'Persiapan Kerja',
-          category: ActivityCategory.daily,
-          isCompleted: false),
-      const ActivityModel(
-          id: '7',
-          time: '09:00',
-          emoji: '💼',
-          title: 'Kerja',
-          category: ActivityCategory.career,
-          isCompleted: false),
-      const ActivityModel(
-          id: '8',
-          time: '17:00',
-          emoji: '🏠',
-          title: 'Pulang',
-          category: ActivityCategory.daily,
-          isCompleted: false),
-      const ActivityModel(
-          id: '9',
-          time: '18:30',
-          emoji: '🏋',
-          title: 'Gym',
-          category: ActivityCategory.health,
-          isCompleted: false),
-    ];
+  Future<void> loadActivities(DateTime date) async {
+    final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+    try {
+      final response = await apiService.dio.get('/api/activities', queryParameters: {'date': dateStr});
+      final List<dynamic> data = response.data;
+      state = data.map((json) => ActivityModel.fromJson(json)).toList();
+    } catch (e) {
+      print("Error loading activities: $e");
+    }
   }
 
-  void toggleComplete(String id) {
+  Future<String?> createActivity(ActivityModel activity) async {
+    try {
+      final response = await apiService.dio.post(
+        '/api/activities',
+        data: activity.toJson(),
+      );
+      final newActivity = ActivityModel.fromJson(response.data);
+      state = [...state, newActivity];
+      return null; // Sukses
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data != null) {
+        return e.response!.data['detail'] ?? 'Gagal membuat aktivitas.';
+      }
+      return 'Gagal tersambung ke server.';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> toggleComplete(String id) async {
+    // Optimistic UI update
+    final oldState = state;
     state = state.map((a) {
       if (a.id == id) return a.copyWith(isCompleted: !a.isCompleted);
       return a;
     }).toList();
+
+    try {
+      final response = await apiService.dio.put('/api/activities/$id/toggle');
+      final updated = ActivityModel.fromJson(response.data);
+      state = oldState.map((a) => a.id == id ? updated : a).toList();
+    } catch (e) {
+      // Revert jika gagal
+      state = oldState;
+      print("Error toggling activity: $e");
+    }
   }
 
-  void deleteActivity(String id) {
+  Future<void> deleteActivity(String id) async {
+    final oldState = state;
     state = state.where((a) => a.id != id).toList();
+
+    try {
+      await apiService.dio.delete('/api/activities/$id');
+    } catch (e) {
+      // Revert jika gagal
+      state = oldState;
+      print("Error deleting activity: $e");
+    }
   }
 
   double get completionRate {
@@ -102,82 +90,60 @@ class ActivitiesNotifier extends StateNotifier<List<ActivityModel>> {
 
 final habitsProvider =
     StateNotifierProvider<HabitsNotifier, List<HabitModel>>((ref) {
-  return HabitsNotifier();
+  final notifier = HabitsNotifier();
+  notifier.loadHabits();
+  return notifier;
 });
 
 class HabitsNotifier extends StateNotifier<List<HabitModel>> {
-  HabitsNotifier() : super(_defaultHabits());
+  HabitsNotifier() : super([]);
 
-  static List<HabitModel> _defaultHabits() {
-    return [
-      HabitModel(
-          id: '1',
-          name: 'Sholat 5 Waktu',
-          emoji: '🕌',
-          completedDays: _generateDays(27)),
-      HabitModel(
-          id: '2',
-          name: 'Subuh Tepat Waktu',
-          emoji: '🌅',
-          completedDays: _generateDays(22)),
-      HabitModel(
-          id: '3',
-          name: 'Bahasa Inggris',
-          emoji: '🇬🇧',
-          completedDays: _generateDays(18)),
-      HabitModel(
-          id: '4',
-          name: 'Membaca Buku',
-          emoji: '📖',
-          completedDays: _generateDays(15)),
-      HabitModel(
-          id: '5',
-          name: 'Workout',
-          emoji: '💪',
-          completedDays: _generateDays(12)),
-      HabitModel(
-          id: '6',
-          name: 'Minum Air 2L',
-          emoji: '💧',
-          completedDays: _generateDays(24)),
-      HabitModel(
-          id: '7',
-          name: 'Tidur Sebelum 22.00',
-          emoji: '🌙',
-          completedDays: _generateDays(20)),
-      HabitModel(
-          id: '8',
-          name: 'No Doom Scrolling',
-          emoji: '📵',
-          completedDays: _generateDays(10)),
-    ];
-  }
-
-  static List<DateTime> _generateDays(int count) {
-    final now = DateTime.now();
-    final days = <DateTime>[];
-    for (int i = count; i >= 0; i--) {
-      if (days.length >= count) break;
-      final day = now.subtract(Duration(days: i));
-      if (i % 3 != 0 || i == 0) days.add(day);
+  Future<void> loadHabits() async {
+    try {
+      final response = await apiService.dio.get('/api/habits');
+      final List<dynamic> data = response.data;
+      state = data.map((json) => HabitModel.fromJson(json)).toList();
+    } catch (e) {
+      print("Error loading habits: $e");
     }
-    return days;
   }
 
-  void toggleToday(String id) {
+  Future<String?> createHabit(String name, String emoji) async {
+    try {
+      final response = await apiService.dio.post(
+        '/api/habits',
+        data: {
+          'name': name,
+          'emoji': emoji,
+        },
+      );
+      final newHabit = HabitModel.fromJson(response.data);
+      state = [...state, newHabit];
+      return null;
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data != null) {
+        return e.response!.data['detail'] ?? 'Gagal membuat kebiasaan.';
+      }
+      return 'Gagal tersambung ke server.';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> toggleToday(String id) async {
+    final oldState = state;
+    final today = DateTime.now();
+    final dateStr = "${today.year}-${today.month.toString().padLeft(2, '0')}-${today.day.toString().padLeft(2, '0')}";
+
+    // Optimistic UI update
     state = state.map((h) {
       if (h.id == id) {
-        final today = DateTime.now();
         final hasToday = h.completedDays.any((d) =>
-            d.year == today.year &&
-            d.month == today.month &&
-            d.day == today.day);
+            d.year == today.year && d.month == today.month && d.day == today.day);
         if (hasToday) {
           return h.copyWith(
             completedDays: h.completedDays
-                .where((d) => !(d.year == today.year &&
-                    d.month == today.month &&
-                    d.day == today.day))
+                .where((d) => !(d.year == today.year && d.month == today.month && d.day == today.day))
                 .toList(),
           );
         } else {
@@ -186,6 +152,27 @@ class HabitsNotifier extends StateNotifier<List<HabitModel>> {
       }
       return h;
     }).toList();
+
+    try {
+      final response = await apiService.dio.put('/api/habits/$id/toggle', queryParameters: {'date': dateStr});
+      final updated = HabitModel.fromJson(response.data);
+      state = oldState.map((h) => h.id == id ? updated : h).toList();
+    } catch (e) {
+      state = oldState;
+      print("Error toggling habit: $e");
+    }
+  }
+
+  Future<void> deleteHabit(String id) async {
+    final oldState = state;
+    state = state.where((h) => h.id != id).toList();
+
+    try {
+      await apiService.dio.delete('/api/habits/$id');
+    } catch (e) {
+      state = oldState;
+      print("Error deleting habit: $e");
+    }
   }
 }
 
@@ -193,32 +180,40 @@ class HabitsNotifier extends StateNotifier<List<HabitModel>> {
 
 final prayerProvider =
     StateNotifierProvider<PrayerNotifier, List<PrayerModel>>((ref) {
-  return PrayerNotifier();
+  final notifier = PrayerNotifier();
+  notifier.loadPrayers(DateTime.now());
+  return notifier;
 });
 
 class PrayerNotifier extends StateNotifier<List<PrayerModel>> {
-  PrayerNotifier() : super(_defaultPrayers());
+  PrayerNotifier() : super([]);
 
-  static List<PrayerModel> _defaultPrayers() {
-    return [
-      const PrayerModel(
-          name: 'Subuh', time: '04:10', isCompleted: true, emoji: '🌙'),
-      const PrayerModel(
-          name: 'Dzuhur', time: '12:05', isCompleted: true, emoji: '☀️'),
-      const PrayerModel(
-          name: 'Ashar', time: '15:20', isCompleted: false, emoji: '🌤️'),
-      const PrayerModel(
-          name: 'Maghrib', time: '17:58', isCompleted: false, emoji: '🌅'),
-      const PrayerModel(
-          name: 'Isya', time: '19:10', isCompleted: false, emoji: '🌙'),
-    ];
+  Future<void> loadPrayers(DateTime date) async {
+    final dateStr = "${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}";
+    try {
+      final response = await apiService.dio.get('/api/prayers', queryParameters: {'date': dateStr});
+      final List<dynamic> data = response.data;
+      state = data.map((json) => PrayerModel.fromJson(json)).toList();
+    } catch (e) {
+      print("Error loading prayers: $e");
+    }
   }
 
-  void toggleCompleted(String name) {
+  Future<void> toggleCompleted(String id) async {
+    final oldState = state;
     state = state.map((p) {
-      if (p.name == name) return p.copyWith(isCompleted: !p.isCompleted);
+      if (p.id == id) return p.copyWith(isCompleted: !p.isCompleted);
       return p;
     }).toList();
+
+    try {
+      final response = await apiService.dio.put('/api/prayers/$id/toggle');
+      final updated = PrayerModel.fromJson(response.data);
+      state = oldState.map((p) => p.id == id ? updated : p).toList();
+    } catch (e) {
+      state = oldState;
+      print("Error toggling prayer: $e");
+    }
   }
 
   double get completionRate {
@@ -259,30 +254,88 @@ final todayProgressProvider = Provider<double>((ref) {
 
 // ─── Weekly Goals Provider ─────────────────────────────────────────────────────
 
-final weeklyGoalsProvider = StateProvider<List<WeeklyGoalModel>>((ref) {
-  return [
-    WeeklyGoalModel(
-        title: 'Bahasa Inggris',
-        emoji: '🇬🇧',
-        current: 8,
-        target: 10,
-        unit: 'jam'),
-    WeeklyGoalModel(
-        title: 'Workout', emoji: '🏋', current: 3, target: 4, unit: 'kali'),
-    WeeklyGoalModel(
-        title: 'Buku', emoji: '📖', current: 2, target: 5, unit: 'jam'),
-    WeeklyGoalModel(
-        title: 'Belajar Skill',
-        emoji: '💻',
-        current: 5,
-        target: 8,
-        unit: 'jam'),
-    WeeklyGoalModel(
-        title: 'Investasi', emoji: '💰', current: 1, target: 2, unit: 'jam'),
-  ];
+final weeklyGoalsProvider =
+    StateNotifierProvider<WeeklyGoalsNotifier, List<WeeklyGoalModel>>((ref) {
+  final notifier = WeeklyGoalsNotifier();
+  notifier.loadGoals();
+  return notifier;
 });
 
+class WeeklyGoalsNotifier extends StateNotifier<List<WeeklyGoalModel>> {
+  WeeklyGoalsNotifier() : super([]);
+
+  Future<void> loadGoals() async {
+    try {
+      final response = await apiService.dio.get('/api/weekly-goals');
+      final List<dynamic> data = response.data;
+      state = data.map((json) => WeeklyGoalModel.fromJson(json)).toList();
+    } catch (e) {
+      print("Error loading weekly goals: $e");
+    }
+  }
+
+  Future<String?> createGoal(String title, String emoji, int target, String unit) async {
+    try {
+      final response = await apiService.dio.post(
+        '/api/weekly-goals',
+        data: {
+          'title': title,
+          'emoji': emoji,
+          'target': target,
+          'unit': unit,
+        },
+      );
+      final newGoal = WeeklyGoalModel.fromJson(response.data);
+      state = [...state, newGoal];
+      return null;
+    } on DioException catch (e) {
+      if (e.response != null && e.response!.data != null) {
+        return e.response!.data['detail'] ?? 'Gagal membuat target mingguan.';
+      }
+      return 'Gagal tersambung ke server.';
+    } catch (e) {
+      return e.toString();
+    }
+  }
+
+  Future<void> incrementGoal(String id, {int amount = 1}) async {
+    final oldState = state;
+    state = state.map((g) {
+      if (g.id == id) {
+        final newCurrent = (g.current + amount).clamp(0, g.target);
+        return g.copyWith(current: newCurrent);
+      }
+      return g;
+    }).toList();
+
+    try {
+      final response = await apiService.dio.put(
+        '/api/weekly-goals/$id/increment',
+        queryParameters: {'amount': amount},
+      );
+      final updated = WeeklyGoalModel.fromJson(response.data);
+      state = oldState.map((g) => g.id == id ? updated : g).toList();
+    } catch (e) {
+      state = oldState;
+      print("Error incrementing goal: $e");
+    }
+  }
+
+  Future<void> deleteGoal(String id) async {
+    final oldState = state;
+    state = state.where((g) => g.id != id).toList();
+
+    try {
+      await apiService.dio.delete('/api/weekly-goals/$id');
+    } catch (e) {
+      state = oldState;
+      print("Error deleting goal: $e");
+    }
+  }
+}
+
 class WeeklyGoalModel {
+  final String id;
   final String title;
   final String emoji;
   final int current;
@@ -290,12 +343,53 @@ class WeeklyGoalModel {
   final String unit;
 
   WeeklyGoalModel({
+    required this.id,
     required this.title,
     required this.emoji,
     required this.current,
     required this.target,
     required this.unit,
   });
+
+  factory WeeklyGoalModel.fromJson(Map<String, dynamic> json) {
+    return WeeklyGoalModel(
+      id: json['id'] ?? '',
+      title: json['title'] ?? '',
+      emoji: json['emoji'] ?? '🎯',
+      current: json['current'] ?? 0,
+      target: json['target'] ?? 1,
+      unit: json['unit'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id.isEmpty ? null : id,
+      'title': title,
+      'emoji': emoji,
+      'current': current,
+      'target': target,
+      'unit': unit,
+    };
+  }
+
+  WeeklyGoalModel copyWith({
+    String? id,
+    String? title,
+    String? emoji,
+    int? current,
+    int? target,
+    String? unit,
+  }) {
+    return WeeklyGoalModel(
+      id: id ?? this.id,
+      title: title ?? this.title,
+      emoji: emoji ?? this.emoji,
+      current: current ?? this.current,
+      target: target ?? this.target,
+      unit: unit ?? this.unit,
+    );
+  }
 
   double get progress => (current / target).clamp(0, 1);
 }

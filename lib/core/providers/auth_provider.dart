@@ -1,24 +1,51 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dio/dio.dart';
+import '../network/api_service.dart';
 
 // ─── User Model ─────────────────────────────────────────────────────────────
 
 class UserModel {
+  final String id;
   final String email;
   final String displayName;
+  final int xp;
+  final int level;
 
-  const UserModel({required this.email, required this.displayName});
+  const UserModel({
+    required this.id,
+    required this.email,
+    required this.displayName,
+    required this.xp,
+    required this.level,
+  });
+
+  factory UserModel.fromJson(Map<String, dynamic> json) {
+    return UserModel(
+      id: json['userId'] ?? '',
+      email: json['email'] ?? '',
+      displayName: json['displayName'] ?? '',
+      xp: json['xp'] ?? 0,
+      level: json['level'] ?? 1,
+    );
+  }
 
   factory UserModel.fromPrefs(SharedPreferences prefs) {
     return UserModel(
+      id: prefs.getString('auth_user_id') ?? '',
       email: prefs.getString('auth_email') ?? '',
       displayName: prefs.getString('auth_display_name') ?? '',
+      xp: prefs.getInt('auth_xp') ?? 0,
+      level: prefs.getInt('auth_level') ?? 1,
     );
   }
 
   Future<void> saveToPrefs(SharedPreferences prefs) async {
+    await prefs.setString('auth_user_id', id);
     await prefs.setString('auth_email', email);
     await prefs.setString('auth_display_name', displayName);
+    await prefs.setInt('auth_xp', xp);
+    await prefs.setInt('auth_level', level);
   }
 }
 
@@ -80,16 +107,28 @@ class AuthNotifier extends StateNotifier<AuthState> {
     _checkSession();
   }
 
-  // Simulasi "database" pengguna terdaftar (in-memory + SharedPreferences)
-  static const String _accountsKey = 'registered_accounts';
-
   Future<void> _checkSession() async {
     state = const AuthState.loading();
     final prefs = await SharedPreferences.getInstance();
     final isLoggedIn = prefs.getBool('auth_is_logged_in') ?? false;
-    if (isLoggedIn) {
-      final user = UserModel.fromPrefs(prefs);
-      state = AuthState.authenticated(user);
+    final token = prefs.getString('jwt_token') ?? '';
+
+    if (isLoggedIn && token.isNotEmpty) {
+      // Ambil profile dari backend untuk menjamin data paling valid & sync
+      try {
+        final response = await apiService.dio.get('/api/users/me');
+        final user = UserModel.fromJson(response.data);
+        await user.saveToPrefs(prefs);
+        state = AuthState.authenticated(user);
+      } catch (e) {
+        // Jika gagal koneksi/session expired, gunakan cache lokal atau logout
+        final user = UserModel.fromPrefs(prefs);
+        if (user.email.isNotEmpty) {
+          state = AuthState.authenticated(user);
+        } else {
+          state = const AuthState.unauthenticated();
+        }
+      }
     } else {
       state = const AuthState.unauthenticated();
     }
@@ -101,29 +140,38 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String password,
   }) async {
     state = const AuthState.loading();
-    await Future.delayed(const Duration(milliseconds: 800)); // simulasi network
+    try {
+      final response = await apiService.dio.post(
+        '/api/auth/signup',
+        data: {
+          'email': email,
+          'password': password,
+          'displayName': displayName,
+        },
+      );
 
-    final prefs = await SharedPreferences.getInstance();
-    final accounts = prefs.getStringList(_accountsKey) ?? [];
+      final token = response.data['token'];
+      final user = UserModel.fromJson(response.data);
 
-    // Cek apakah email sudah terdaftar
-    final emailExists = accounts.any((a) => a.startsWith('$email:'));
-    if (emailExists) {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', token);
+      await user.saveToPrefs(prefs);
+      await prefs.setBool('auth_is_logged_in', true);
+
+      state = AuthState.authenticated(user);
+      return null; // Sukses
+    } on DioException catch (e) {
       state = const AuthState.unauthenticated();
-      return 'Email sudah terdaftar. Silakan login.';
+      if (e.response != null && e.response!.data != null) {
+        // Coba baca error RFC 9457 dari backend
+        final detail = e.response!.data['detail'];
+        return detail ?? 'Registrasi gagal. Silakan coba lagi.';
+      }
+      return 'Koneksi ke server gagal.';
+    } catch (e) {
+      state = const AuthState.unauthenticated();
+      return e.toString();
     }
-
-    // Simpan akun baru
-    accounts.add('$email:$password:$displayName');
-    await prefs.setStringList(_accountsKey, accounts);
-
-    // Login otomatis setelah signup
-    final user = UserModel(email: email, displayName: displayName);
-    await user.saveToPrefs(prefs);
-    await prefs.setBool('auth_is_logged_in', true);
-
-    state = AuthState.authenticated(user);
-    return null; // null = sukses
   }
 
   Future<String?> login({
@@ -131,39 +179,48 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required String password,
   }) async {
     state = const AuthState.loading();
-    await Future.delayed(const Duration(milliseconds: 800)); // simulasi network
+    try {
+      final response = await apiService.dio.post(
+        '/api/auth/login',
+        data: {
+          'email': email,
+          'password': password,
+        },
+      );
 
-    final prefs = await SharedPreferences.getInstance();
-    final accounts = prefs.getStringList(_accountsKey) ?? [];
+      final token = response.data['token'];
+      final user = UserModel.fromJson(response.data);
 
-    // Cari akun dengan email & password yang cocok
-    String? foundName;
-    for (final account in accounts) {
-      final parts = account.split(':');
-      if (parts.length >= 3 && parts[0] == email && parts[1] == password) {
-        foundName = parts[2];
-        break;
-      }
-    }
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setString('jwt_token', token);
+      await user.saveToPrefs(prefs);
+      await prefs.setBool('auth_is_logged_in', true);
 
-    if (foundName == null) {
+      state = AuthState.authenticated(user);
+      return null; // Sukses
+    } on DioException catch (e) {
       state = const AuthState.unauthenticated();
-      return 'Email atau password salah.';
+      if (e.response != null && e.response!.data != null) {
+        // Coba baca error RFC 9457 dari backend
+        final detail = e.response!.data['detail'];
+        return detail ?? 'Email atau password salah.';
+      }
+      return 'Koneksi ke server gagal.';
+    } catch (e) {
+      state = const AuthState.unauthenticated();
+      return e.toString();
     }
-
-    final user = UserModel(email: email, displayName: foundName);
-    await user.saveToPrefs(prefs);
-    await prefs.setBool('auth_is_logged_in', true);
-
-    state = AuthState.authenticated(user);
-    return null; // null = sukses
   }
 
   Future<void> logout() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.setBool('auth_is_logged_in', false);
+    await prefs.remove('jwt_token');
+    await prefs.remove('auth_user_id');
     await prefs.remove('auth_email');
     await prefs.remove('auth_display_name');
+    await prefs.remove('auth_xp');
+    await prefs.remove('auth_level');
     state = const AuthState.unauthenticated();
   }
 }

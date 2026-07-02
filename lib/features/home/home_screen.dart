@@ -143,7 +143,10 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     Text(
                       '$greeting, $userName 👋',
                       style: AppTypography.greeting,
-                    ).animate().fadeIn(duration: 500.ms).slideX(begin: -0.05, end: 0),
+                    )
+                        .animate()
+                        .fadeIn(duration: 500.ms)
+                        .slideX(begin: -0.05, end: 0),
                     const SizedBox(height: 4),
                     Text(
                       dateStr,
@@ -208,7 +211,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                         decoration: BoxDecoration(
                           color: AppColors.emeraldGlow,
                           borderRadius: BorderRadius.circular(8),
-                          border: Border.all(color: AppColors.emerald.withValues(alpha: 0.3)),
+                          border: Border.all(
+                              color: AppColors.emerald.withValues(alpha: 0.3)),
                         ),
                         child: Text(
                           '"Disiplin hari ini adalah\ninvestasi masa depan."',
@@ -252,7 +256,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
           child: Row(
             children: [
               Icon(
-                m.$3 ? Icons.check_circle_rounded : Icons.radio_button_unchecked_rounded,
+                m.$3
+                    ? Icons.check_circle_rounded
+                    : Icons.radio_button_unchecked_rounded,
                 size: 14,
                 color: m.$3 ? AppColors.emerald : AppColors.textMuted,
               ),
@@ -261,7 +267,8 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                 child: Text(
                   '${m.$1} ${m.$2}',
                   style: AppTypography.bodySmall.copyWith(
-                    color: m.$3 ? AppColors.textPrimary : AppColors.textSecondary,
+                    color:
+                        m.$3 ? AppColors.textPrimary : AppColors.textSecondary,
                     decoration: m.$3 ? TextDecoration.lineThrough : null,
                     decorationColor: AppColors.textMuted,
                   ),
